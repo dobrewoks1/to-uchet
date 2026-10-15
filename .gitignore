@@ -1,0 +1,28 @@
+# окружения и сборка
+.venv/
+.py38/
+build/
+dist/
+*.spec
+__pycache__/
+*.pyc
+
+# данные программы (рабочие, dev и демо — демо-база создаётся seed_demo.py)
+data/
+dev-data/
+demo-data/
+*.db
+*.db-wal
+*.db-shm
+
+# медиа и черновики
+*.mp4
+*.wmv
+docs/demo-video/
+docs/guide/
+
+# локальные настройки инструментов
+.claude/
+.tastemaker/
+.vscode/
+.idea/

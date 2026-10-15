@@ -1,0 +1,131 @@
+/* «Учёт ТО» — печать (A4, чёрным по белому). Правила — app/static/UI_KIT.md, раздел «Печать».
+   На печати скрыты оболочка, кнопки и фильтры (.toolbar); страница может скрыть своё классом .no-print
+   и показать только на бумаге классом .print-only. Альбомную ориентацию включает ui.printPage(title, {landscape: true}). */
+
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+@media print {
+  :root {
+    --print-ink: #000;
+    --print-paper: #fff;
+  }
+
+  html, body {
+    height: auto;
+    min-width: 0;
+    overflow: visible;
+    background: var(--print-paper);
+    font-size: 10pt;
+  }
+
+  /* чёрное на белом: никаких цветных фонов, теней и анимаций
+     (движение на бумаге отключено целиком, отдельная ветка prefers-reduced-motion здесь не нужна) */
+  body, body * {
+    background: transparent !important;
+    color: var(--print-ink) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* оболочка, кнопки, фильтры, всплывающее — не печатаются */
+  .sidebar, .topbar, .conn-banner, .toolbar, .tabs, .kpis, .filter-chips, .save-bar, .btn, .modal-overlay, .toasts, .popover,
+  .loading, .th-sort .icon, .no-print {
+    display: none !important;
+  }
+
+  #app, .main, .content, .page, .page.page-fill {
+    display: block;
+    height: auto;
+    min-height: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  /* заголовок листа из ui.printPage(title) */
+  body[data-print-title]::before {
+    content: attr(data-print-title);
+    display: block;
+    margin: 0 0 8pt;
+    font-size: 14pt;
+    font-weight: 700;
+  }
+
+  h1, h2, h3, .card-title, .section-title { break-after: avoid; }
+
+  a { text-decoration: none; }
+
+  .card {
+    padding: 0;
+    border: 0;
+    break-inside: avoid;
+  }
+  .card + .card, .stack > * + * { margin-top: 10pt; }
+  .cards { display: block; }
+
+  /* таблицы: рамки, шапка белая с жирным текстом, повторяется на каждом листе */
+  .table-wrap, .table-wrap.table-sticky, .table-wrap.table-fill {
+    max-height: none !important;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+  }
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+  }
+  .table thead { position: static; display: table-header-group; }
+  .table tfoot td { position: static; }
+  .table tr { break-inside: avoid; }
+  .table th, .table td, .table tbody tr:last-child td, .table tfoot td {
+    height: auto;
+    padding: 3pt 4pt;
+    border: 1px solid var(--print-ink);
+    white-space: normal;
+  }
+  .table th, .table th.th-input { border-color: var(--print-ink); font-size: 9pt; font-weight: 700; }
+  .th-sort { height: auto; font-weight: 700; }
+  .num, .table th.num { white-space: nowrap; }
+
+  /* чипы — обычным текстом */
+  .chip {
+    display: inline;
+    height: auto;
+    padding: 0;
+    border-radius: 0;
+    font-size: inherit;
+    font-weight: 400;
+    white-space: nowrap; /* короткая подпись статуса не рвётся на две строки («На / линии») */
+    filter: grayscale(1); /* цветные кружки-эмодзи 🔴🟡🟢 — серыми: лист чёрно-белый */
+  }
+
+  /* кремовые поля — обычный подчёркнутый текст */
+  .input, .readout {
+    height: auto;
+    min-height: 0;
+    padding: 0 2pt;
+    border: 0;
+    border-bottom: 1px solid var(--print-ink);
+    border-radius: 0;
+    appearance: none;
+    resize: none;
+  }
+  .input::placeholder { color: transparent !important; }
+  .input::-webkit-calendar-picker-indicator { display: none; }
+  .table .input { height: auto; min-width: 0; }
+
+  /* .print-blank (главная): поля таблицы — пустые рамки, бланк для обхода, куда вписывают от руки */
+  .print-blank .input {
+    min-height: 16pt;
+    padding: 1pt 3pt;
+    border: 1px solid var(--print-ink);
+  }
+
+  .notice, .error-state { border-color: var(--print-ink); }
+  .kpi { border-color: var(--print-ink); }
+}
